@@ -1,14 +1,28 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
+import { Stack } from 'expo-router';
+import { Image } from 'expo-image';
+import { Colors } from '../../constants/Colors';
 
-import EditScreenInfo from '@/components/EditScreenInfo';
-import { Text, View } from '@/components/Themed';
-
-export default function TabOneScreen() {
+export default function HomeScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
+      {/* O Stack.Screen é opcional aqui, mas pode ser útil
+        para esconder a barra de título padrão se você não precisar dela.
+      */}
+      <Stack.Screen options={{ headerShown: false }} />
+
+      {/* Conteúdo centralizado: Logo e Slogan */}
+      <View style={styles.contentContainer}>
+        <Image
+          source={require('../../assets/images/logo.png')}
+          style={styles.logo}
+          contentFit='contain' />
+        <Text style={styles.slogan}>Reconheça. Localize. Explore.</Text>
+      </View>
+
+      {/* A barra de navegação (tab bar) é controlada
+        pelo arquivo (tabs)/_layout.tsx, então não a adicionamos aqui.
+      */}
     </View>
   );
 }
@@ -16,16 +30,22 @@ export default function TabOneScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
+    backgroundColor: Colors.light.background,
     justifyContent: 'center',
+    alignItems: 'center',
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  contentContainer: {
+    alignItems: 'center',
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
+  logo: {
+    width: 240,
+    height: 200,
+  },
+  slogan: {
+    position: 'absolute',
+    bottom: 32,
+    fontSize: 18,
+    color: Colors.dark.tint, // azul exclusiva do slogan
+    fontStyle: 'italic',
   },
 });
