@@ -15,10 +15,12 @@ const colorTextDark = '#ECEDEE';
 const colorTitleLight = '#151515';
 const colorTitleDark = '#B3CDE0';
 const sloganColor = '#012E57';
+const colorDark_01 = '#000000';
+const colorLight_01 = '#ffffff';
 
 export const Colors = {
   light: {
-    background: secondaryColorLight,
+    background: colorLight_01,
     text: colorTextLight,
     title: colorTitleLight,
     slogan: sloganColor,
@@ -27,12 +29,12 @@ export const Colors = {
     tabIconDefault: 'rgba(1, 46, 87, 0.6)',
     tabIconSelected: primaryColorDark,
     splashBackground: secondaryColorDark,
-    splashProgress: '#ffffff',
+    splashProgress: colorLight_01,
     splashProgressBg: primaryColorLight,
     highlight: highlightColor,
     textLink: colorTitleDark,
     headerText: primaryColorDark,
-    headerBg: secondaryColorLight,
+    headerBg: colorLight_01,
   },
   dark: {
     background: primaryColorDark,
@@ -57,5 +59,7 @@ export const Colors = {
     success: '#4cd964',
     info: secondaryColorDark,
     marker: secondaryColorLight,
+    dark: colorDark_01,
+    light: colorLight_01
   },
 };

@@ -223,6 +223,7 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
     },
+    /* Camera e área de captura */
     cameraContainer: {
         flex: 1,
         width: '90%',
@@ -253,13 +254,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontWeight: '600',
     },
-    permissionText: {
-        fontSize: 20,
-        textAlign: 'center',
-        marginBottom: 20,
-        lineHeight: 30,
-        width: '80%',
-    },
     logo: {
         width: 200,
         height: 180,
@@ -281,7 +275,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.dark.tint,
         justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: '#000',
+        shadowColor: Colors.dark.tint,
         shadowOffset: { width: 1, height: 2 },
         shadowOpacity: 0.3,
         shadowRadius: 3,
@@ -297,6 +291,16 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    /* Fim - Camera e área de captura */
+    /* Inicio - Permissão */
+    permissionText: {
+        fontSize: 20,
+        textAlign: 'center',
+        marginBottom: 20,
+        lineHeight: 30,
+        width: '80%',
+    },
+    /* Fim - Permissão */
     /*inicio - estilos dos marcadores */
     markerContainer: {
         position: 'absolute',
