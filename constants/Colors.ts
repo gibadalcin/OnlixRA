@@ -51,4 +51,11 @@ export const Colors = {
     headerText : primaryColorLight,
     headerBg: primaryColorDark,
   },
+  global: {
+    error: '#ff3b30',
+    warning: '#ffcc00',
+    success: '#4cd964',
+    info: secondaryColorDark,
+    marker: secondaryColorLight,
+  },
 };
