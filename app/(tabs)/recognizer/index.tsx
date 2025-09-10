@@ -1,11 +1,9 @@
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import * as MediaLibrary from 'expo-media-library';
-import * as ImageManipulator from 'expo-image-manipulator';
 import { useFocusEffect } from 'expo-router';
 import React, { useRef, useState } from 'react';
-import { useWindowDimensions, Alert, View, StyleSheet } from 'react-native';
+import { useWindowDimensions, View, StyleSheet, Alert } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, { useSharedValue } from 'react-native-reanimated';
@@ -19,6 +17,7 @@ import { PermissionRequest } from '@/components/ui/PermissionRequest';
 // Importação dos hooks
 import { useGallery } from '@/hooks/useGallery';
 import { useHistory } from '@/hooks/useHistory';
+import { useCamera } from '@/hooks/useCamera';
 
 export default function RecognizerScreen() {
     const [permission, requestPermission] = useCameraPermissions();
@@ -32,6 +31,7 @@ export default function RecognizerScreen() {
 
     const { openGallery } = useGallery();
     const { openHistory } = useHistory();
+    const { takePictureAndSave } = useCamera(cameraRef, width, height, permission, requestPermission);
 
     const pinchGesture = Gesture.Pinch()
         .onStart(() => {
@@ -52,61 +52,6 @@ export default function RecognizerScreen() {
             };
         }, [])
     );
-
-    const takePictureAndSave = async () => {
-        if (!permission?.granted) {
-            const { granted } = await requestPermission();
-            if (!granted) {
-                Alert.alert('Permissão', 'A permissão da câmera é necessária para capturar fotos.');
-                return;
-            }
-        }
-        const { granted: mediaLibraryGranted } = await MediaLibrary.requestPermissionsAsync();
-        if (!mediaLibraryGranted) {
-            Alert.alert('Permissão', 'A permissão da galeria é necessária para salvar a foto.');
-            return;
-        }
-
-        if (cameraRef.current) {
-            try {
-                const fullPhoto = await cameraRef.current.takePictureAsync();
-
-                const cameraViewWidth = width * 0.9;
-                const cameraViewHeight = height * 0.8;
-                const scaleX = fullPhoto.width / cameraViewWidth;
-                const scaleY = fullPhoto.height / cameraViewHeight;
-                const focalAreaWidth = 250;
-                const focalAreaHeight = 250;
-                const cropOriginX_screen = (cameraViewWidth - focalAreaWidth) / 2;
-                const cropOriginY_screen = ((height * 0.8) - focalAreaHeight) / 2;
-                const finalCropOriginX = cropOriginX_screen * scaleX;
-                const finalCropOriginY = cropOriginY_screen * scaleY;
-                const finalCropWidth = focalAreaWidth * scaleX;
-                const finalCropHeight = focalAreaHeight * scaleY;
-
-                const croppedPhoto = await ImageManipulator.manipulateAsync(
-                    fullPhoto.uri,
-                    [
-                        {
-                            crop: {
-                                originX: finalCropOriginX,
-                                originY: finalCropOriginY,
-                                width: finalCropWidth,
-                                height: finalCropHeight,
-                            },
-                        },
-                    ],
-                    { compress: 1, format: ImageManipulator.SaveFormat.PNG }
-                );
-
-                await MediaLibrary.saveToLibraryAsync(croppedPhoto.uri);
-                Alert.alert('Sucesso', 'Foto salva na galeria do app!');
-            } catch (error) {
-                console.error('Erro ao capturar, recortar ou salvar a foto:', error);
-                Alert.alert('Erro', 'Ocorreu um erro ao salvar a foto.');
-            }
-        }
-    };
 
     const renderContent = () => {
         if (!permission) {
