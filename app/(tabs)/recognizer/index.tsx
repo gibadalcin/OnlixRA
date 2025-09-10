@@ -1,36 +1,37 @@
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import { Image } from 'expo-image';
 import * as MediaLibrary from 'expo-media-library';
 import * as ImageManipulator from 'expo-image-manipulator';
-import * as ImagePicker from 'expo-image-picker';
-import { useFocusEffect, router } from 'expo-router';
+import { useFocusEffect } from 'expo-router';
 import React, { useRef, useState } from 'react';
-import {
-    Button,
-    Pressable,
-    StyleSheet,
-    View,
-    useWindowDimensions,
-    Alert
-} from 'react-native';
+import { useWindowDimensions, Alert, View, StyleSheet } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, { useSharedValue } from 'react-native-reanimated';
 import { runOnJS } from 'react-native-reanimated';
 
+// Importação dos componentes UI
+import { CameraMarkers } from '@/components/ui/CameraMarkers';
+import { CameraActions } from '@/components/ui/CameraActions';
+import { PermissionRequest } from '@/components/ui/PermissionRequest';
+
+// Importação dos hooks
+import { useGallery } from '@/hooks/useGallery';
+import { useHistory } from '@/hooks/useHistory';
 
 export default function RecognizerScreen() {
     const [permission, requestPermission] = useCameraPermissions();
     const cameraRef = useRef<CameraView>(null);
     const { width, height } = useWindowDimensions();
     const [isFocused, setIsFocused] = useState(false);
-    const [zoomLevel, setZoomLevel] = useState(0); // Adicione este estado
+    const [zoomLevel, setZoomLevel] = useState(0);
 
     const zoom = useSharedValue(0);
     const initialZoom = useSharedValue(0);
+
+    const { openGallery } = useGallery();
+    const { openHistory } = useHistory();
 
     const pinchGesture = Gesture.Pinch()
         .onStart(() => {
@@ -40,7 +41,7 @@ export default function RecognizerScreen() {
             const newZoom = initialZoom.value + (event.scale - 1);
             const clampedZoom = Math.min(Math.max(newZoom, 0), 1);
             zoom.value = clampedZoom;
-            runOnJS(setZoomLevel)(clampedZoom); // Atualiza o estado React
+            runOnJS(setZoomLevel)(clampedZoom);
         });
 
     useFocusEffect(
@@ -107,22 +108,6 @@ export default function RecognizerScreen() {
         }
     };
 
-    const openGallery = async () => {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-            Alert.alert('Permissão', 'A permissão da galeria é necessária.');
-            return;
-        }
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ['images'], // Corrigido!
-            allowsEditing: false,
-            quality: 1,
-        });
-        if (!result.canceled && result.assets && result.assets.length > 0) {
-            Alert.alert('Imagem selecionada', result.assets[0].uri);
-        }
-    };
-
     const renderContent = () => {
         if (!permission) {
             return <View />;
@@ -130,14 +115,7 @@ export default function RecognizerScreen() {
 
         if (!permission.granted) {
             return (
-                <>
-                    <Image
-                        source={require('../../../assets/images/adaptive-icon.png')}
-                        style={styles.logo}
-                        contentFit='contain' />
-                    <ThemedText style={styles.permissionText}>Precisamos de permissão para acessar a câmera.</ThemedText>
-                    <Button onPress={requestPermission} title="Conceder Permissão" />
-                </>
+                <PermissionRequest onRequestPermission={requestPermission} />
             );
         }
 
@@ -153,52 +131,17 @@ export default function RecognizerScreen() {
                                 zoom={zoomLevel}
                             />
                         </GestureDetector>
-                        {/* Marcadores nos cantos do quadrado central */}
-                        <View
-                            pointerEvents="none"
-                            style={[
-                                styles.markerContainer,
-                                {
-                                    width: 250,
-                                    height: 200,
-                                    left: '50%',
-                                    top: '50%',
-                                    marginLeft: -125,
-                                    marginTop: -100,
-                                },
-                            ]}
-                        >
-                            <View style={styles.markerTopLeft} />
-                            <View style={styles.markerTopRight} />
-                            <View style={styles.markerBottomLeft} />
-                            <View style={styles.markerBottomRight} />
-                        </View>
+                        <CameraMarkers />
                     </View>
                     <View style={styles.interactionBlock}>
-                        <ThemedText style={styles.captureInfo}>Aponte a câmera para a logomarca e toque para capturar!</ThemedText>
-                        <View style={styles.buttonRow}>
-                            <Pressable onPress={openGallery}>
-                                <Ionicons name="images" size={32} color={Colors.light.tabIconDefault} />
-                                <ThemedText style={styles.gallery}>Galeria</ThemedText>
-                            </Pressable>
-                            <Pressable
-                                style={({ pressed }) => [
-                                    styles.mainButton,
-                                    { opacity: pressed ? 0.7 : 1 },
-                                ]}
-                                onPress={takePictureAndSave}
-                            >
-                                <View style={styles.outerCircle}>
-                                    <View style={styles.innerCircle}>
-                                        <Ionicons name="camera" size={32} color={Colors.light.background} />
-                                    </View>
-                                </View>
-                            </Pressable>
-                            <Pressable onPress={() => router.push('/(tabs)/recognizer/history')}>
-                                <Ionicons name="folder-open" size={32} color={Colors.light.tabIconDefault} />
-                                <ThemedText style={styles.history}>Salvos</ThemedText>
-                            </Pressable>
-                        </View>
+                        <ThemedText style={styles.captureInfo}>
+                            Aponte a câmera para a logomarca e toque para capturar!
+                        </ThemedText>
+                        <CameraActions
+                            onOpenGallery={openGallery}
+                            onTakePicture={takePictureAndSave}
+                            onOpenHistory={openHistory}
+                        />
                     </View>
                 </View>
             )
@@ -223,7 +166,6 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
     },
-    /* Camera e área de captura */
     cameraContainer: {
         flex: 1,
         width: '90%',
@@ -243,112 +185,5 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         lineHeight: 30,
         color: Colors.light.text,
-    },
-    history: {
-        fontSize: 12,
-        textAlign: 'center',
-        fontWeight: '800',
-    },
-    gallery: {
-        fontSize: 12,
-        textAlign: 'center',
-        fontWeight: '600',
-    },
-    logo: {
-        width: 200,
-        height: 180,
-    },
-    buttonRow: {
-        flexDirection: 'row',
-        alignItems: 'flex-end',
-        justifyContent: 'space-around',
-        width: '100%',
-        marginTop: 32,
-    },
-    mainButton: {
-        marginBottom: 20,
-    },
-    outerCircle: {
-        width: 70,
-        height: 70,
-        borderRadius: 35,
-        backgroundColor: Colors.dark.tint,
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: Colors.dark.tint,
-        shadowOffset: { width: 1, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 3,
-        elevation: 3,
-    },
-    innerCircle: {
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        backgroundColor: Colors.dark.tint,
-        borderColor: Colors.light.background,
-        borderWidth: 3,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    /* Fim - Camera e área de captura */
-    /* Inicio - Permissão */
-    permissionText: {
-        fontSize: 20,
-        textAlign: 'center',
-        marginBottom: 20,
-        lineHeight: 30,
-        width: '80%',
-    },
-    /* Fim - Permissão */
-    /*inicio - estilos dos marcadores */
-    markerContainer: {
-        position: 'absolute',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    markerTopLeft: {
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        width: 30,
-        height: 30,
-        borderTopWidth: 4,
-        borderLeftWidth: 4,
-        borderColor: Colors.global.marker,
-        borderRadius: 8,
-    },
-    markerTopRight: {
-        position: 'absolute',
-        right: 0,
-        top: 0,
-        width: 30,
-        height: 30,
-        borderTopWidth: 4,
-        borderRightWidth: 4,
-        borderColor: Colors.global.marker,
-        borderRadius: 8,
-    },
-    markerBottomLeft: {
-        position: 'absolute',
-        left: 0,
-        bottom: 0,
-        width: 30,
-        height: 30,
-        borderBottomWidth: 4,
-        borderLeftWidth: 4,
-        borderColor: Colors.global.marker,
-        borderRadius: 8,
-    },
-    markerBottomRight: {
-        position: 'absolute',
-        right: 0,
-        bottom: 0,
-        width: 30,
-        height: 30,
-        borderBottomWidth: 4,
-        borderRightWidth: 4,
-        borderColor: Colors.global.marker,
-        borderRadius: 8,
     },
 });
