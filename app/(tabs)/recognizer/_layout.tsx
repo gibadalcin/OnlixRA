@@ -9,12 +9,8 @@ export default function RecognizerLayout() {
                 options={getHeaderOptions('Captura de Imagem', require('../../../assets/images/icon.png'))}
             />
             <Stack.Screen
-                name="gallery"
-                options={getHeaderOptions('Galeria', require('../../../assets/images/icon.png'))}
-            />
-            <Stack.Screen
                 name="history"
-                options={getHeaderOptions('Histórico', require('../../../assets/images/icon.png'))}
+                options={getHeaderOptions('Histórico de favoritos')}
             />
         </Stack>
     );

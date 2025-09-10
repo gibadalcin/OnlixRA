@@ -5,6 +5,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Image } from 'expo-image';
 import * as MediaLibrary from 'expo-media-library';
 import * as ImageManipulator from 'expo-image-manipulator';
+import * as ImagePicker from 'expo-image-picker';
 import { useFocusEffect, router } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import {
@@ -106,6 +107,21 @@ export default function RecognizerScreen() {
         }
     };
 
+    const openGallery = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+            Alert.alert('Permissão', 'A permissão da galeria é necessária.');
+            return;
+        }
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'], // Corrigido!
+            allowsEditing: false,
+            quality: 1,
+        });
+        if (!result.canceled && result.assets && result.assets.length > 0) {
+            Alert.alert('Imagem selecionada', result.assets[0].uri);
+        }
+    };
 
     const renderContent = () => {
         if (!permission) {
@@ -161,7 +177,7 @@ export default function RecognizerScreen() {
                     <View style={styles.interactionBlock}>
                         <ThemedText style={styles.captureInfo}>Aponte a câmera para a logomarca e toque para capturar!</ThemedText>
                         <View style={styles.buttonRow}>
-                            <Pressable onPress={() => router.push('/(tabs)/recognizer/gallery')}>
+                            <Pressable onPress={openGallery}>
                                 <Ionicons name="images" size={32} color={Colors.light.tabIconDefault} />
                                 <ThemedText style={styles.gallery}>Galeria</ThemedText>
                             </Pressable>
