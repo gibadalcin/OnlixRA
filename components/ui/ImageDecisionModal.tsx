@@ -7,14 +7,21 @@ import { useSaveToGallery } from '@/hooks/useSaveToGallery';
 import { LoadingCaptureModal } from './LoadingCaptureModal';
 import { compareLogo } from '@/hooks/useLogoCompare';
 
-interface Props {
+export type Props = {
     visible: boolean;
     imageUri: string;
+    onCompare: () => Promise<void>;
     onSave: () => void;
     onCancel: () => void;
-}
+    // outras props se necessário
+};
 
-export function ImageDecisionModal({ visible, imageUri, onSave, onCancel }: Props) {
+export function ImageDecisionModal({
+    visible,
+    imageUri,
+    onSave,
+    onCancel,
+}: Props) {
     const { width } = useWindowDimensions();
     const imageWidth = width * 0.8;
     const { saveToGallery } = useSaveToGallery();

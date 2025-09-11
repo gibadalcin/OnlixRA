@@ -4,7 +4,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useFocusEffect } from 'expo-router';
 import React, { useRef, useState } from 'react';
-import { useWindowDimensions, View, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, { useSharedValue } from 'react-native-reanimated';

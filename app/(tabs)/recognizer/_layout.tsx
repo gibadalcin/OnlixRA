@@ -1,7 +1,13 @@
 import { Stack } from 'expo-router';
+import { useEffect } from 'react';
+import { setVisibilityAsync } from 'expo-navigation-bar';
 import { getHeaderOptions } from '../../../components/ui/HeaderOptions'; // Importe a função
 
 export default function RecognizerLayout() {
+    useEffect(() => {
+        setVisibilityAsync('hidden');
+    }, []);
+
     return (
         <Stack>
             <Stack.Screen

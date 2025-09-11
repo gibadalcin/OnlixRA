@@ -6,7 +6,7 @@ export async function compareLogo(imageUri: string) {
     // Garante base64
     let imageBase64 = imageUri;
     if (!imageUri.startsWith('data:image')) {
-        const fileBase64 = await FileSystem.readAsStringAsync(imageUri, { encoding: FileSystem.EncodingType.Base64 });
+        const fileBase64 = await FileSystem.readAsStringAsync(imageUri, { encoding: 'base64' });
         imageBase64 = `data:image/jpeg;base64,${fileBase64}`;
     }
 
