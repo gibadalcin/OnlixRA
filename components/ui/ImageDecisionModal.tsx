@@ -3,6 +3,7 @@ import { Modal, View, Image, StyleSheet, Pressable, Text } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import { useWindowDimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useSaveToGallery } from '@/hooks/useSaveToGallery';
 
 interface Props {
     visible: boolean;
@@ -15,6 +16,7 @@ interface Props {
 export function ImageDecisionModal({ visible, imageUri, onCompare, onSave, onCancel }: Props) {
     const { width } = useWindowDimensions();
     const imageWidth = width * 0.8;
+    const { saveToGallery } = useSaveToGallery();
 
     return (
         <Modal visible={visible} transparent>
@@ -29,7 +31,7 @@ export function ImageDecisionModal({ visible, imageUri, onCompare, onSave, onCan
                             </View>
                         </Pressable>
                         <View style={styles.spacer} />
-                        <Pressable style={styles.fullButton} onPress={onSave}>
+                        <Pressable style={styles.fullButton} onPress={() => saveToGallery(imageUri, onSave)}>
                             <View style={styles.buttonContent}>
                                 <MaterialIcons name="save" color={Colors.global.light} size={24} style={styles.icon} />
                                 <Text style={styles.buttonText}>Salvar</Text>
