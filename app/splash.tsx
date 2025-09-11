@@ -2,6 +2,7 @@ import { router, Stack } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import { StyleSheet, View, Animated } from 'react-native';
 import { Image } from 'expo-image';
+import { initLogoCache } from '@/hooks/useLogoCache';
 
 export default function SplashScreen() {
     const loadProgress = useRef(new Animated.Value(0)).current;
@@ -17,6 +18,10 @@ export default function SplashScreen() {
                 router.replace('/(tabs)');
             }, 300);
         });
+    }, []);
+
+    useEffect(() => {
+        initLogoCache();
     }, []);
 
     const progressBarWidth = loadProgress.interpolate({
