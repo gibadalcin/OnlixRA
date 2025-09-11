@@ -1,3 +1,4 @@
+import 'react-native-reanimated';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { CameraView, useCameraPermissions } from 'expo-camera';
@@ -13,11 +14,15 @@ import { runOnJS } from 'react-native-reanimated';
 import { CameraMarkers } from '@/components/ui/CameraMarkers';
 import { CameraActions } from '@/components/ui/CameraActions';
 import { PermissionRequest } from '@/components/ui/PermissionRequest';
+import { ImageDecisionModal } from '@/components/ui/ImageDecisionModal';
 
 // Importação dos hooks
 import { useGallery } from '@/hooks/useGallery';
 import { useHistory } from '@/hooks/useHistory';
 import { useCamera } from '@/hooks/useCamera';
+import { useCapture } from '@/hooks/useCapture';
+import { sendToGoogleVision } from '@/hooks/useVision';
+
 
 export default function RecognizerScreen() {
     const [permission, requestPermission] = useCameraPermissions();
@@ -26,12 +31,17 @@ export default function RecognizerScreen() {
     const [isFocused, setIsFocused] = useState(false);
     const [zoomLevel, setZoomLevel] = useState(0);
 
-    const zoom = useSharedValue(0);
-    const initialZoom = useSharedValue(0);
-
     const { openGallery } = useGallery();
     const { openHistory } = useHistory();
-    const { takePictureAndSave } = useCamera(cameraRef, width, height, permission, requestPermission);
+
+    // Novo hook para captura e processamento
+    const { imageUri, captureAndProcess, setImageUri } = useCapture(cameraRef);
+
+    // Estado para modal de decisão
+    const [modalVisible, setModalVisible] = useState(false);
+
+    const zoom = useSharedValue(0);
+    const initialZoom = useSharedValue(0);
 
     const pinchGesture = Gesture.Pinch()
         .onStart(() => {
@@ -52,6 +62,26 @@ export default function RecognizerScreen() {
             };
         }, [])
     );
+
+    // Função para capturar e abrir modal
+    async function handleTakePicture() {
+        const uri = await captureAndProcess();
+        if (uri) setModalVisible(true);
+    }
+
+    // Função para enviar ao Google Vision
+    async function handleCompare() {
+        if (imageUri) {
+            await sendToGoogleVision(imageUri);
+        }
+        setModalVisible(false);
+    }
+
+    // Função para salvar no histórico
+    function handleSave() {
+        // Implemente a lógica de histórico aqui
+        setModalVisible(false);
+    }
 
     const renderContent = () => {
         if (!permission) {
@@ -84,10 +114,17 @@ export default function RecognizerScreen() {
                         </ThemedText>
                         <CameraActions
                             onOpenGallery={openGallery}
-                            onTakePicture={takePictureAndSave}
+                            onTakePicture={handleTakePicture}
                             onOpenHistory={openHistory}
                         />
                     </View>
+                    <ImageDecisionModal
+                        visible={modalVisible}
+                        imageUri={imageUri ?? ''}
+                        onCompare={handleCompare}
+                        onSave={handleSave}
+                        onCancel={() => { setModalVisible(false); setImageUri(null); }}
+                    />
                 </View>
             )
         );

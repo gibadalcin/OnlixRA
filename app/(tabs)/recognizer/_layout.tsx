@@ -14,4 +14,4 @@ export default function RecognizerLayout() {
             />
         </Stack>
     );
-} '1'
+};

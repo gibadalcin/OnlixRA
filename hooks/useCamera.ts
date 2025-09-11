@@ -1,7 +1,6 @@
 import * as MediaLibrary from 'expo-media-library';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { Alert } from 'react-native';
-
 import { RefObject } from 'react';
 
 export function useCamera(

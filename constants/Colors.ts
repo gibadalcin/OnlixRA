@@ -3,7 +3,7 @@
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
  */
 
-import { blue } from "react-native-reanimated/lib/typescript/Colors";
+import { blue, red } from "react-native-reanimated/lib/typescript/Colors";
 
 const primaryColorLight = '#B3CDE0';
 const primaryColorDark = '#012E57';
@@ -16,7 +16,12 @@ const colorTitleLight = '#151515';
 const colorTitleDark = '#B3CDE0';
 const sloganColor = '#012E57';
 const colorDark_01 = '#000000';
+const colorDark_02 = '#687076';
+const colorDark_10 = '#012E57';
+const colorDark_20 = '#e20202ff';
 const colorLight_01 = '#ffffff';
+const colorLight_10 = '#007AFF';
+
 
 export const Colors = {
   light: {
@@ -60,6 +65,10 @@ export const Colors = {
     info: secondaryColorDark,
     marker: secondaryColorLight,
     dark: colorDark_01,
-    light: colorLight_01
+    grey: colorDark_02,
+    blueLight: colorLight_10,
+    blueDark: colorDark_10,
+    light: colorLight_01,
+    red: colorDark_20
   },
 };
