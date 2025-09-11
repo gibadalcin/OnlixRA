@@ -4,7 +4,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useFocusEffect } from 'expo-router';
 import React, { useRef, useState } from 'react';
-import { useWindowDimensions, View, StyleSheet, Alert } from 'react-native';
+import { useWindowDimensions, View, StyleSheet } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, { useSharedValue } from 'react-native-reanimated';
@@ -19,7 +19,6 @@ import { ImageDecisionModal } from '@/components/ui/ImageDecisionModal';
 // Importação dos hooks
 import { useGallery } from '@/hooks/useGallery';
 import { useHistory } from '@/hooks/useHistory';
-import { useCamera } from '@/hooks/useCamera';
 import { useCapture } from '@/hooks/useCapture';
 import { sendToGoogleVision } from '@/hooks/useVision';
 
@@ -27,7 +26,6 @@ import { sendToGoogleVision } from '@/hooks/useVision';
 export default function RecognizerScreen() {
     const [permission, requestPermission] = useCameraPermissions();
     const cameraRef = useRef<CameraView>(null);
-    const { width, height } = useWindowDimensions();
     const [isFocused, setIsFocused] = useState(false);
     const [zoomLevel, setZoomLevel] = useState(0);
 
