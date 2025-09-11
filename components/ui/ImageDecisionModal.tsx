@@ -23,29 +23,18 @@ export function ImageDecisionModal({ visible, imageUri, onCompare, onSave, onCan
             <View style={styles.overlay}>
                 <Image source={{ uri: imageUri }} style={{ width: imageWidth, height: imageWidth / 1.25, borderRadius: 12 }} />
                 <View style={styles.buttonContainer}>
-                    <View style={styles.buttonTopRow}>
-                        <Pressable style={styles.fullButton} onPress={onCompare}>
-                            <View style={styles.buttonContent}>
-                                <MaterialIcons name="search" color={Colors.global.light} size={24} style={styles.icon} />
-                                <Text style={styles.buttonText}>Buscar</Text>
-                            </View>
-                        </Pressable>
-                        <View style={styles.spacer} />
-                        <Pressable style={styles.fullButton} onPress={() => saveToGallery(imageUri, onSave)}>
-                            <View style={styles.buttonContent}>
-                                <MaterialIcons name="save" color={Colors.global.light} size={24} style={styles.icon} />
-                                <Text style={styles.buttonText}>Salvar</Text>
-                            </View>
-                        </Pressable>
-                    </View>
-                    <View style={styles.buttonTopRow}>
-                        <Pressable style={[styles.fullButton, styles.fullButtonLarge]} onPress={onCancel}>
-                            <View style={styles.buttonContent}>
-                                <MaterialIcons name="cancel" color={Colors.global.light} size={24} style={styles.icon} />
-                                <Text style={styles.buttonText}>Cancelar</Text>
-                            </View>
-                        </Pressable>
-                    </View>
+                    <Pressable style={styles.fullButton} onPress={onCompare}>
+                        <MaterialIcons name="search" color={Colors.global.light} size={24} style={styles.icon} />
+                        <Text style={styles.buttonText}>Buscar conteúdo associado</Text>
+                    </Pressable>
+                    <Pressable style={styles.fullButton} onPress={() => saveToGallery(imageUri, onSave)}>
+                        <MaterialIcons name="save" color={Colors.global.light} size={24} style={styles.icon} />
+                        <Text style={styles.buttonText}>Salvar na galeria</Text>
+                    </Pressable>
+                    <Pressable style={[styles.fullButton, styles.fullButtonExit]} onPress={onCancel}>
+                        <MaterialIcons name="cancel" color={Colors.global.light} size={24} style={styles.icon} />
+                        <Text style={styles.buttonText}>Cancelar</Text>
+                    </Pressable>
                 </View>
             </View>
         </Modal>
@@ -60,21 +49,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     buttonContainer: {
-        marginTop: 24,
+        marginTop: 32,
         width: '80%',
-    },
-    buttonTopRow: {
-        paddingVertical: 8,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        width: '100%',
-    },
-    spacer: {
-        width: 16, // Espaço horizontal entre os botões
+        flexDirection: 'column',
     },
     fullButton: {
-        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
+        paddingVertical: 16,
         borderRadius: 5,
         backgroundColor: Colors.global.blueLight,
         shadowColor: Colors.global.dark,
@@ -82,18 +65,11 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.3,
         shadowRadius: 3,
         elevation: 5,
-        justifyContent: 'center',
-        alignItems: 'center',
+        marginBottom: 16, // Espaço entre botões
     },
-    fullButtonLarge: {
+    fullButtonExit: {
         backgroundColor: Colors.global.blueDark,
-    },
-    buttonContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 4,
-        width: '100%',
+        marginBottom: 0, // Último botão sem margem
     },
     icon: {
         marginRight: 8,
@@ -102,9 +78,5 @@ const styles = StyleSheet.create({
     buttonText: {
         color: 'white',
         fontSize: 16,
-        textAlign: 'center',
-        paddingVertical: 12,
-        backgroundColor: 'transparent',
-        alignSelf: 'center',
     },
 });
