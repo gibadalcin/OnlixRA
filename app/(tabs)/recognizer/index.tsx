@@ -3,11 +3,12 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useFocusEffect } from 'expo-router';
+import { setVisibilityAsync } from 'expo-navigation-bar';
 import React, { useRef, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
-import Animated, { useSharedValue } from 'react-native-reanimated';
+import { useSharedValue } from 'react-native-reanimated';
 import { runOnJS } from 'react-native-reanimated';
 
 // Importação dos componentes UI
@@ -29,7 +30,13 @@ export default function RecognizerScreen() {
     const [isFocused, setIsFocused] = useState(false);
     const [zoomLevel, setZoomLevel] = useState(0);
 
-    const { openGallery } = useGallery();
+    const { openGallery: originalOpenGallery } = useGallery();
+
+    async function openGallery() {
+        await originalOpenGallery();
+        setVisibilityAsync('hidden'); // Esconde a barra ao retornar da galeria
+    }
+
     const { openHistory } = useHistory();
 
     // Novo hook para captura e processamento
@@ -55,9 +62,8 @@ export default function RecognizerScreen() {
     useFocusEffect(
         React.useCallback(() => {
             setIsFocused(true);
-            return () => {
-                setIsFocused(false);
-            };
+            setVisibilityAsync('hidden');
+            return () => setIsFocused(false);
         }, [])
     );
 

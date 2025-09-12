@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, View, StyleSheet, ActivityIndicator } from 'react-native';
+import { Modal, View, StyleSheet, ActivityIndicator, Text, Button } from 'react-native';
 import { Colors } from '@/constants/Colors';
 
 interface LoadingCaptureModalProps {
     visible: boolean;
     onFinish?: () => void;
+    onCancel?: () => void;
+    result?: { status: 'success' | 'error' };
     minDuration?: number; // em ms
 }
 
-export function LoadingCaptureModal({ visible, onFinish, minDuration = 3000 }: LoadingCaptureModalProps) {
+export function LoadingCaptureModal({ visible, onFinish, onCancel, result, minDuration = 3000 }: LoadingCaptureModalProps) {
     const [show, setShow] = useState(false);
 
     useEffect(() => {
@@ -25,6 +27,15 @@ export function LoadingCaptureModal({ visible, onFinish, minDuration = 3000 }: L
             if (timer) clearTimeout(timer);
         };
     }, [visible, minDuration, onFinish]);
+
+    if (result?.status === 'error') {
+        return (
+            <View>
+                <Text>Ocorreu um erro ao processar a imagem.</Text>
+                <Button title="Cancelar" onPress={onCancel} />
+            </View>
+        );
+    }
 
     return (
         <Modal visible={show} transparent animationType="fade">

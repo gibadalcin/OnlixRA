@@ -6,14 +6,14 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useSaveToGallery } from '@/hooks/useSaveToGallery';
 import { LoadingCaptureModal } from './LoadingCaptureModal';
 import { compareLogo } from '@/hooks/useLogoCompare';
+import { NoContentToDisplayModal } from './NoContentToDisplay'; // Importação correta
 
 export type Props = {
     visible: boolean;
     imageUri: string;
-    onCompare: () => Promise<void>;
+    onCompare?: () => Promise<void>;
     onSave: () => void;
     onCancel: () => void;
-    // outras props se necessário
 };
 
 export function ImageDecisionModal({
@@ -26,6 +26,7 @@ export function ImageDecisionModal({
     const imageWidth = width * 0.8;
     const { saveToGallery } = useSaveToGallery();
     const [loading, setLoading] = useState(false);
+    const [showNoContentModal, setShowNoContentModal] = useState(false);
 
     async function handleCompare() {
         setLoading(true);
@@ -34,8 +35,8 @@ export function ImageDecisionModal({
             Alert.alert('Conteúdo já reconhecido!', `Nome: ${result.data.name}`);
         } else if (result.status === 'recognized') {
             Alert.alert('Conteúdo reconhecido!', `Nome: ${result.data.name}`);
-        } else {
-            Alert.alert('Sem conteúdo associado', 'Nenhuma logomarca reconhecida.');
+        } else if (result.status === 'not_found') {
+            setShowNoContentModal(true);
         }
         setLoading(false);
     }
@@ -46,9 +47,15 @@ export function ImageDecisionModal({
         setLoading(false);
     }
 
+    function handleNoContentCancel() {
+        setShowNoContentModal(false);
+        onCancel();
+    }
+
     return (
         <>
             <LoadingCaptureModal visible={loading} />
+            <NoContentToDisplayModal visible={showNoContentModal} onCancel={handleNoContentCancel} />
             <Modal visible={visible} transparent>
                 <View style={styles.overlay}>
                     <Image source={{ uri: imageUri }} style={{ width: imageWidth, height: imageWidth / 1.25, borderRadius: 12 }} />
